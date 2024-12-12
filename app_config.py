@@ -12,8 +12,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 socketio = SocketIO(app)
 csp = {
-    'default-src': ["'self'", 'https://cdn.socket.io'],
-    'script-src': ["'self'", 'https://cdn.socket.io', "'unsafe-inline'"],
-
+    'default-src': ["'self'", 'https://cdn.socket.io', 'https://cdn.tailwindcss.com'],
+    'script-src': ["'self'", 'https://cdn.socket.io', 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
+    'style-src': ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
 }
 Talisman(app, content_security_policy=csp)

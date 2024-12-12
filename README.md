@@ -10,4 +10,3 @@ pip install -r requirements.txt
 
 ## ejecutar
 python app.py
-

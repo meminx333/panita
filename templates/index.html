@@ -4,6 +4,7 @@
         <meta charset="UTF-8" Content-Type="text/html">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Tablero de Juego</title>
+        <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
         
     </head>
@@ -53,7 +54,7 @@
         <table id="tabla_tiros">
             <thead>
                 <tr>
-                    <th>Jugador</th>
+                    <th class="text-orange-700">Jugador</th>
                     <th>Dado 1</th>
                     <th>Dado 2</th>
                 </tr>
