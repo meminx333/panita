@@ -1,6 +1,6 @@
 import { mostrarNotificacion, sincronizarEstadoInicial } from './utils.js';
 import { mostrarUltimosTiros } from './dados.js';
-import { moverFichaAfuera,  } from './fichas.js';
+import { moverFichaAfuera  } from './fichas.js';
 var socket = io();
 
 socket.on("connect", () => console.log("Conectado al servidor Socket.IO"));
@@ -30,6 +30,7 @@ socket.on("actualizar_ultimos_tiros", (data) => {
 socket.on("cambiar_turno", (data) => {
     document.getElementById("turno-actual").innerText = `Turno actual: Jugador ${data.jugador_id}`;
     mostrarNotificacion(`Es el turno del Jugador ${data.jugador_id}`);
+    data.jugador_id = window.jugador_id;
 });
 
 

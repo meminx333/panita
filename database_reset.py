@@ -1,8 +1,8 @@
 """AI is creating summary for Returns:[type]: [description]"""
 
 from app_config import db, app
-from modelos import Jugador, Ficha, Casilla
-from tablero.casillas import tablero_configurado, obtener_casilla_inicial
+from modelos import Jugador, Ficha
+from tablero.casillas import obtener_casilla_inicial
 
 
 def reset_database():
