@@ -1,34 +1,41 @@
-function contarFichasEnPosicion(jugador, posicion) {
-    // Seleccionar todas las fichas
-    const fichas = document.querySelectorAll(".ficha");
-    
-    // Filtrar y contar las fichas que coinciden con el jugador y la posición
-    const contador = Array.from(fichas).filter(
-        ficha => ficha.dataset.jugador === jugador && ficha.dataset.posicion === String(posicion)
-    ).length;
+import { actualizarTablaDebug } from "./debug.js";
+import { actualizarContadores } from "./contadorInicial.js";
 
-    console.log(`Jugador ${jugador} tiene ${contador} fichas en la posición ${posicion}.`);
-    return contador;
-}
-
-export function actualizarContadores() {
-    const fichasJugador1 = contarFichasEnPosicion("1", -1);
-    const fichasJugador2 = contarFichasEnPosicion("2", -1);
-
-    document.getElementById("contador-jugador-1").innerText = `Jugador 1: ${fichasJugador1} fichas en -1`;
-    document.getElementById("contador-jugador-2").innerText = `Jugador 2: ${fichasJugador2} fichas en -1`;
+// Función para inicializar eventos en las fichas
+export function inicializarFichas() {
+    document.querySelectorAll(".ficha").forEach((ficha) => {
+        let fichaId = ficha.id;
+        const posicionInicial = parseInt(ficha.dataset.posicion,10);
+        
+        const inicioCasilla = document.querySelector(`[id="${ficha.dataset.casilla_id}"]`);
+        if (inicioCasilla) {
+            inicioCasilla.appendChild(ficha); // Mover ficha al contenedor
+            ficha.dataset.casilla_id = inicioCasilla.id; // Actualizar casilla inicial
+            actualizarTablaDebug(fichaId, posicionInicial, ficha.dataset.casilla_id);
+        } else {
+            console.log(`Casilla inicial no encontrada para ficha ${fichaId}.`);
+        }
+    });
 }
 
 export async function moverFichaAfuera(fichaId, nuevaPosicion) {
     // Validaciones iniciales
-    if (!fichaId || nuevaPosicion === undefined) {
-        console.error("Ficha ID o nueva posición no definidos.");
+    if (!fichaId ) {
+        console.error("Ficha ID no definidos.");
         return;
     }
-    // Validar rango de posición
-    if (typeof nuevaPosicion !== "number" || nuevaPosicion < 0 || nuevaPosicion > 61) {
-        console.error("Posición fuera de rango:", nuevaPosicion);
+
+    if (nuevaPosicion === undefined) {
+        console.error("Nueva posición no definida.");
         return;
+    }
+
+    console.log(`Intentando mover la ficha ${fichaId} a la posición ${nuevaPosicion}`);
+    
+    // Validar rango de posición
+    if (!Number.isInteger(nuevaPosicion) || nuevaPosicion < 0 || nuevaPosicion > 61) {
+        console.error(`Posición fuera de rango: ${nuevaPosicion}`);
+        return Promise.reject(`Posición fuera de rango: ${nuevaPosicion}`);// Evita el movimiento fuera del rango
     }
 
     try {
@@ -41,27 +48,41 @@ export async function moverFichaAfuera(fichaId, nuevaPosicion) {
 
         const data = await respuesta.json();
         console.log("Reespuesta del servidor", data);
-    
-        if (data.success) {
-            // Actualizar visualmente
-            const ficha = document.getElementById(fichaId);
-            if (!ficha) {
-                console.error(`No se encontró la ficha con ID ${fichaId}`);
-                return;
-            }
 
-            const nuevaCasilla = document.querySelector(`[data-re${ficha.dataset.jugador}="${nuevaPosicion}"]`);
-            if (nuevaCasilla) {
-                // Mover ficha al contenedor visual
-                nuevaCasilla.appendChild(ficha);
-                ficha.dataset.posicion=nuevaPosicion; // Actualizar posición en los atributos de datos
-                console.log(`Ficha ${fichaId} movida a la casilla ${nuevaPosicion}`);
+        if (!data.success) {
+            console.error(`Error al mover la ficha: ${data.error || "Error desconocido"}`);
+            return;
+        }
 
-                // Actualizar contadores de fichas
-                actualizarContadores();
-            } else {
-                console.error(`No se encontró la casilla para jugador ${ficha.dataset.jugador} en posición ${nuevaPosicion}`);
-            }
+        // Actualizar visualmente
+        const ficha = document.getElementById(fichaId);
+
+        if (!ficha) {
+            console.error(`No se encontró la ficha con ID ${fichaId}`);
+            return;
+        } 
+
+        const nuevaCasilla = document.querySelector(`[data-re${ficha.dataset.jugador}="${nuevaPosicion}"]`);
+        if (!nuevaCasilla) {
+            console.error(`Error: No se encontró una casilla válida para el jugador ${ficha.dataset.jugador} en posición ${nuevaPosicion}.`);
+            return;
+        }
+
+        if (nuevaCasilla && ficha) {
+            // Mover ficha al contenedor visual
+            nuevaCasilla.appendChild(ficha);
+
+
+            // Actualizar atributos de datos de la ficha
+            ficha.dataset.posicion = nuevaPosicion; // Actualizar posición en los atributos de datos
+            ficha.dataset.casilla_id = nuevaCasilla.id;
+
+            console.log(`Ficha ${fichaId} movida a la casilla ${nuevaCasilla.id} en la posicion ${nuevaPosicion}`);
+            
+            // Actualizar contadores de fichas
+            actualizarContadores();
+            actualizarTablaDebug(fichaId, nuevaPosicion, nuevaCasilla.id);
+            
         } else {
             console.error("Error al mover la ficha:", data.mensaje || "Error desconocido");
         }

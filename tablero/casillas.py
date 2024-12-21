@@ -117,6 +117,7 @@ tablero_configurado = crear_tablero(
     matriz_recorrido1,
     matriz_recorrido2,
 )
+
 def obtener_casilla_inicial(jugador_id, numero):
     """obtener la casilla inicial de cada ficha"""
     for fila in tablero_configurado:

@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 socketio = SocketIO(app)
 csp = {
     'default-src': ["'self'", 'https://cdn.socket.io'],
-    'script-src': ["'self'", 'https://cdn.socket.io', "'unsafe-inline'"],
+    'script-src': ["'self'", 'https://cdn.socket.io'],
 
 }
 Talisman(app, content_security_policy=csp)

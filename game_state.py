@@ -15,6 +15,7 @@ class GameState:
     def cambiar_turno(self):
         """Cambia el turno al siguiente jugador."""
         self.turno_actual = 2 if self.turno_actual == 1 else 1
+        self.reiniciar_dados()  # Reinicia los dados al cambiar de turno
         return self.turno_actual
 
     def obtener_turno_actual(self):
@@ -34,21 +35,37 @@ class GameState:
             "jugador": self.turno_actual,
         })
         print(f"Lanzamiento:dado1={self.estado_dados['dado1']}, dado2={self.estado_dados['dado2']}")
+        return self.estado_dados  # Retornar el estado para facilitar la sincronización
 
     def obtener_estado_dados(self):
         """Devuelve el estado actual de los dados."""
         return self.estado_dados
 
+
     def marcar_dado_usado(self, index):
         """Marca un dado como usado."""
         if index in [0, 1] and not self.estado_dados["usados"][index]:
             self.estado_dados["usados"][index] = True
+            valor_dado = self.estado_dados["dado1"] if index == 0 else self.estado_dados["dado2"]
             print(
                 f"Dado {index + 1} usado con"
-                f"valor {self.estado_dados['dado1' if index == 0 else 'dado2']}"
+                f"valor {valor_dado}"
                 )
+            return valor_dado
         else:
             print(f"Error: Dado {index + 1} ya fue usado o índice inválido.")
+            return 0  # Devuelve 0 si ya fue usado o el índice es inválido
+
+    def reiniciar_dados(self):
+        """Reinicia los valores de los dados y su estado de uso."""
+        self.estado_dados = {"dado1": 0, "dado2": 0, "usados": [False, False]}
+        print("Estado de dados reiniciado.")
+
+    def reset_dados_si_necesario(self):
+        """Resetea los dados si ambos han sido usados"""
+        if all(self.estado_dados["usados"]):
+            self.estado_dados = {"dado1": 0, "dado2": 0, "usados": [False, False]}
+            print("Dados reseteados para el siguiente turno.")
 
     def obtener_ultimos_tiros(self):
         """Devuelve los últimos tres lanzamientos de dados."""
