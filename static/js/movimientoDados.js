@@ -1,56 +1,47 @@
-import { moverFichaAfuera } from "./fichas.js";
 import { usarDado } from "./dados.js";
-let keydownListener = null; // Referencia al evento actual
+import { moverFichaAfuera } from "./fichas.js";
 
-// Manejo del teclado para mover fichas en posiciones no iniciales
-export function manejarTeclado(ficha, nuevaPosicion, dado1, dado2) {
-    // Elimina el listener anterior si existe
-    if (keydownListener) {
-       document.removeEventListener("keydown", keydownListener);
-       keydownListener = null;
-       console.log("Listener de teclado eliminado.");
-   }
+export function resaltarOpcionesMovimiento(ficha, dado1, dado2) {
+    const posicionActual = parseInt(ficha.dataset.posicion, 10);
+    let jugador = parseInt(ficha.dataset.jugador,10);
 
-   // Define un nuevo listener
-   keydownListener = (event) => {
-       let nuevaPosicionTemporal = nuevaPosicion; // Copia la posición actual
+    // Opciones adicionales para los valores de los dados
+    const posiblesPosiciones = [
+        { pos: posicionActual + dado1, tipo: "dado1" },
+        { pos: posicionActual + dado2, tipo: "dado2" },
+        { pos: posicionActual + dado1 + dado2, tipo: "suma" },
+    ];
+    console.log(posiblesPosiciones);
 
-       console.log(`Ficha ID: ${ficha.id}, Posición actual: ${nuevaPosicionTemporal}`); // Depuración
-       
-       switch (event.key.toLowerCase()) {
-           case 'a': // Usar dado 1
-               nuevaPosicionTemporal += dado1;
-               console.log(`A la posicion es ${nuevaPosicionTemporal}`);
-               usarDado(0);
-               break;
-           case 'b': // Usar dado 2
-               nuevaPosicionTemporal += dado2;
-               console.log(`B la posicion es ${nuevaPosicionTemporal}`);
-               usarDado(1);
-               break;
-           case 'c': // Usar ambos dados
-               nuevaPosicionTemporal += dado1 + dado2;
-               console.log(`C la posicion es ${nuevaPosicionTemporal}`);
-               usarDado(0);
-               usarDado(1);
-               break;
-           default:
-               console.log("Tecla no válida:", event.key);
-               return;
-       }
+    posiblesPosiciones.forEach(({ pos, tipo }) => {
+        document.querySelectorAll(`.casilla[data-re${jugador}="${pos}"]`).forEach((casilla) => {
+            console.log(casilla);
 
-       // Validar que la nueva posición esté dentro del rango permitido
-       if (nuevaPosicionTemporal != null && nuevaPosicionTemporal >= 0 && nuevaPosicionTemporal <= 61) {
-           moverFichaAfuera(ficha.id, nuevaPosicionTemporal).then(() => {
-               ficha.dataset.posicion = nuevaPosicionTemporal; // Actualiza el atributo dataset
-               console.log(`Ficha ${ficha.id} movida a la posición ${nuevaPosicionTemporal}.`);
-           });
-       } else {
-           console.warn("Nueva posición fuera de rango:", nuevaPosicionTemporal);
-       }
-   };
+            if (casilla) {
+                casilla.classList.add(`resaltada-${tipo}`);
+                casilla.addEventListener("click", async function mover() {
+                    await moverFichaAfuera(ficha.id, pos);
+                    limpiarResaltado();
+                    if (tipo === "dado1") {
+                        usarDado(0);
+                    } 
+                    if  (tipo === "dado2") {
+                        usarDado(1);
+                    }
+                    if (tipo === "suma") {
+                        usarDado(0);
+                        usarDado(1);
+                    }
+                });
+            }
+        });
+    });
+}
 
-   // Asocia el nuevo listener
-   document.addEventListener("keydown", keydownListener);
-   console.log("Nuevo listener de teclado asignado.");
+export function limpiarResaltado() {
+    document.querySelectorAll(".ficha.seleccionada").forEach(ficha => ficha.classList.remove("seleccionada"));
+    document.querySelectorAll(".casilla.resaltada-dado1, .casilla.resaltada-dado2, .casilla.resaltada-suma").forEach(casilla => {
+        casilla.classList.remove("resaltada-dado1", "resaltada-dado2", "resaltada-suma");
+        casilla.replaceWith(casilla.cloneNode(true)); // Remueve todos los listeners
+    });
 }

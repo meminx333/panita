@@ -1,5 +1,8 @@
 import { actualizarTablaDebug } from "./debug.js";
 import { actualizarContadores } from "./contadorInicial.js";
+import { limpiarResaltado } from "./movimientoDados.js";
+import { detectarTorresYColisiones, detectarSalto } from "./torresColiciones.js";
+
 
 // Función para inicializar eventos en las fichas
 export function inicializarFichas() {
@@ -19,6 +22,7 @@ export function inicializarFichas() {
 }
 
 export async function moverFichaAfuera(fichaId, nuevaPosicion) {
+    
     // Validaciones iniciales
     if (!fichaId ) {
         console.error("Ficha ID no definidos.");
@@ -62,30 +66,69 @@ export async function moverFichaAfuera(fichaId, nuevaPosicion) {
             return;
         } 
 
-        const nuevaCasilla = document.querySelector(`[data-re${ficha.dataset.jugador}="${nuevaPosicion}"]`);
-        if (!nuevaCasilla) {
-            console.error(`Error: No se encontró una casilla válida para el jugador ${ficha.dataset.jugador} en posición ${nuevaPosicion}.`);
+        // Obtener el ID del jugador desde la ficha
+        const jugador = parseInt(ficha.dataset.jugador,10);
+        
+        let posicionActual = parseInt(ficha.dataset.posicion, 10);
+        let casillaActual = document.querySelector(`.casilla[data-re${jugador}="${posicionActual}"]`);
+        if (!casillaActual) {
+            console.error(`No se encontró una casilla válida para la posición ${posicionActual}`);
             return;
         }
+        let casillaFinal = document.querySelector(`.casilla[data-re${jugador}="${nuevaPosicion}"]`);
+               
+        if (!casillaFinal) {
+            console.error(`No se encontró una casilla válida para la posición ${nuevaPosicion}`);
+            return;
+        }
+        // Detectar entrada al puente
+        if (
+            casillaActual.dataset[`esp${jugador}`] !== "puente" &&
+            casillaFinal.dataset[`esp${jugador}`] === "puente"
+        ) {
+            console.log("Entrando al puente...");
+        }
 
-        if (nuevaCasilla && ficha) {
+        // Detectar salida del puente y ajustar posición
+        if (
+            casillaActual.dataset[`esp${jugador}`] === "puente" &&
+            casillaFinal.dataset[`esp${jugador}`] !== "puente"
+        ) {
+            console.log("Saliendo del puente, ajustando posición...");
+            nuevaPosicion -= 3; // Ajustar posición al salir del puente
+            casillaFinal = document.querySelector(`.casilla[data-re${jugador}="${nuevaPosicion}"]`);
+        }
+
+        // Mover ficha a la casilla final
+        if (casillaFinal) {
             // Mover ficha al contenedor visual
-            nuevaCasilla.appendChild(ficha);
+            casillaFinal.appendChild(ficha);
 
 
-            // Actualizar atributos de datos de la ficha
+            // Actualizar atributos de datos de la ficha 
             ficha.dataset.posicion = nuevaPosicion; // Actualizar posición en los atributos de datos
-            ficha.dataset.casilla_id = nuevaCasilla.id;
+            ficha.dataset.casilla_id = casillaFinal.id;
 
-            console.log(`Ficha ${fichaId} movida a la casilla ${nuevaCasilla.id} en la posicion ${nuevaPosicion}`);
+            console.log(`Ficha ${fichaId} movida a la casilla ${casillaFinal.id} en la posicion ${nuevaPosicion}`);
             
             // Actualizar contadores de fichas
             actualizarContadores();
-            actualizarTablaDebug(fichaId, nuevaPosicion, nuevaCasilla.id);
-            
+            detectarTorresYColisiones(casillaFinal.id);
+            detectarSalto(ficha.id, nuevaPosicion, jugador);
+            actualizarTablaDebug(fichaId, nuevaPosicion, casillaFinal.id);
+            limpiarResaltado();
+
         } else {
             console.error("Error al mover la ficha:", data.mensaje || "Error desconocido");
         }
+        // Verificar si es una torre
+        //if (data.tipo === "torre") {
+            //console.log("Torre detectada en la posición:", nuevaPosicion);
+            //ficha.classList.add("torre"); // Marcar visualmente como torre
+        //} else {
+            //ficha.classList.remove("torre");
+            //ficha.replaceWith(ficha.cloneNode(true)); // Elimina listeners
+        //}
     } catch (error) {
         console.error("Error en la solicitud de movimiento:", error);   
     }

@@ -95,6 +95,7 @@ def mover_ficha():
     ficha_id = data.get("ficha_id")
     nueva_posicion = data.get("nueva_posicion")
 
+    # Validar datos de entrada
     if ficha_id is None or nueva_posicion is None:
         return jsonify({"success": False, "mensaje": "No se enviaron datos JSON."}), 400
 
@@ -111,6 +112,28 @@ def mover_ficha():
     ficha = Ficha.query.filter_by(ficha_id=ficha_id).first()
     if not ficha:
         return jsonify({"success": False, "mensaje": "Ficha no encontrada."}), 404
+
+     # Detectar colisiones
+    fichas_en_casilla = Ficha.query.filter_by(posicion=nueva_posicion).all()
+    jugadores_en_casilla = {f.jugador_id for f in fichas_en_casilla}
+
+    if fichas_en_casilla:
+        if len(jugadores_en_casilla) > 1:
+            # Hay fichas de diferentes jugadores (colisión)
+            for ficha_colisionada in fichas_en_casilla:
+                if ficha_colisionada.jugador_id != ficha.jugador_id:
+                    ficha_colisionada.posicion = -1  # Regresar a la base
+                    db.session.commit()
+                    return jsonify(
+                        {
+                            "success": True,
+                            "mensaje": "Colisión: ficha regresada a la base.",
+                            "tipo": "colision"
+                        }
+                    )
+        elif ficha.jugador_id in jugadores_en_casilla:
+            # Todas las fichas pertenecen al mismo jugador (torre)
+            return jsonify({"success": True, "mensaje": "Torre detectada.", "tipo": "torre"})
 
 
     # Actualizar la posición

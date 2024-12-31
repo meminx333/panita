@@ -12,14 +12,17 @@ export async function determinarPosicionInicial(dado1, dado2) {
     } else if ((dado1 === 6 && dado2 === 3) || (dado1 === 3 && dado2 === 6)) {
         return 3; // Caso 6-3, 3-6
     } else if (dado1 === 6 && dado2 === 6) {
-        const posicion = await manejarSeisSeis(window.turnoActual); // turnoActual puede ser "1" o "2"
+        // Llamar y esperar el resultado de manejarSeisSeis
+        const posicion = await manejarSeisSeis(window.turnoActual);
+        // turnoActual puede ser "1" o "2"
         return posicion;
     }
     return null; // No hay movimiento válido
 }
 
-async function manejarSeisSeis(turnoActual) {
+export async function manejarSeisSeis(turnoActual) {
 
+    turnoActual = window.turnoActual || turnoActual;
     const jugador = String(window.turnoActual || turnoActual);
 
     // Obtener todas las fichas en la posición inicial (-1)
@@ -27,47 +30,37 @@ async function manejarSeisSeis(turnoActual) {
         document.querySelectorAll(`.ficha[data-jugador="${jugador}"][data-posicion="-1"]`)
     );
 
-    console.log(`Jugador ${jugador} tiene ${fichasEnInicio.length} fichas en posición inicial.`);
+    console.log(
+        `Jugador ${jugador} tiene ${fichasEnInicio.length} fichas en posición inicial.`
+    );
 
     if (fichasEnInicio.length >= 2) {
         // Caso donde hay dos o más fichas en posición inicial
-        alert(`Jugador ${jugador}, selecciona dos fichas para moverlas a la posición 0.`);
+        console.log(
+            `Jugador ${jugador}, selecciona dos fichas para moverlas a la posición 0.`
+        );
 
-        let fichasSeleccionadas = [];
+        // Permitir que el jugador seleccione dos fichas para mover
+        fichasEnInicio.forEach(ficha => {
+            ficha.addEventListener("click", async function seleccionarFicha() {
+                ficha.classList.add("seleccionada"); // Resaltar la ficha seleccionada
 
-        // Agregar evento temporal para seleccionar fichas
-        fichasEnInicio.forEach((ficha) => {
-            ficha.addEventListener("click", function seleccionarFicha() {
-                if (!fichasSeleccionadas.includes(ficha)) {
-                    fichasSeleccionadas.push(ficha);
-                    ficha.style.border = "2px solid green"; // Marcar visualmente la selección
-                    console.log(`Ficha seleccionada: ${ficha.id}`);
-                }
+                if (
+                    document.querySelectorAll(".ficha.seleccionada").length === 2
+                ) {
+                    // Mover ambas fichas a la posición inicial (0)
+                    for (const fichaSeleccionada of document.querySelectorAll(".ficha.seleccionada")) {
+                        await moverFichaAfuera(fichaSeleccionada.id, 0);
+                        fichaSeleccionada.classList.remove("seleccionada");
+                    }
 
-                if (fichasSeleccionadas.length === 2) {
-                    // Mueve las dos fichas seleccionadas
-                    fichasSeleccionadas.forEach((fichaSeleccionada) => {
-                        moverFichaAfuera(fichaSeleccionada.id, 0).then(() => {
-                            fichaSeleccionada.dataset.posicion = 0;
-                            fichaSeleccionada.style.border = ""; // Quitar borde
-                        });
+                    // Limpiar eventos para evitar duplicados
+                    fichasEnInicio.forEach(f => {
+                        f.removeEventListener("click", seleccionarFicha);
                     });
 
-                    console.log(
-                        `Jugador ${jugador} movió las fichas ${fichasSeleccionadas
-                            .map((f) => f.id)
-                            .join(", ")} a la posición 0.`
-                    );
-
-                    usarDado(0);
-                    usarDado(1);
-                    window.dados.usados = [true, true]; // Actualizar estado global
-                    console.log("Turno repetido: dados usados correctamente.");
-
-                    // Limpiar los eventos de clic
-                    fichasEnInicio.forEach((f) =>
-                        f.removeEventListener("click", seleccionarFicha)
-                    );
+                    // Salir del flujo después de mover las fichas
+                    return;
                 }
             });
         });

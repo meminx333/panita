@@ -2,9 +2,7 @@ import { moverFichaAfuera, inicializarFichas } from "./fichas.js";
 import { usarDado, verificarDadosDisponibles } from "./dados.js";
 import { inicializarCasillas } from "./casillas.js";
 import { determinarPosicionInicial } from "./posicionSalida.js";
-import { manejarTeclado } from "./movimientoDados.js";
-
-let keydownListener = null; // Referencia al evento actual
+import { resaltarOpcionesMovimiento, limpiarResaltado } from "./movimientoDados.js";
 
 // Función para inicializar eventos en las fichas
 function inicializarMovimiento() {
@@ -13,13 +11,6 @@ function inicializarMovimiento() {
         // Agregar evento click a la ficha
         ficha.addEventListener("click", async () => {
             console.log(`Ficha seleccionada: ${ficha.id}, posición: ${ficha.dataset.posicion}`);
-
-            // Remover el listener anterior si existe
-            if (keydownListener) {
-                document.removeEventListener("keydown", keydownListener);
-                keydownListener = null;
-                console.log("Listener de teclado eliminado.");
-            }
 
             // Verificar si hay dados disponibles
             const disponibles = await verificarDadosDisponibles();
@@ -42,9 +33,8 @@ function inicializarMovimiento() {
             // Continuar con la lógica de movimiento usando los valores válidos
             console.log("Valores de los dados:", valorDado1, valorDado2);
             console.log(`Estado actualizado de los dados: ${JSON.stringify(window.dados)}`);
-            
             // Validar si la ficha tiene posición inicial
-            if (ficha.dataset.posicion === "-1" ) {
+            if (ficha.dataset.posicion === "-1" && valorDado1 !== 0 && valorDado2 !== 0) {
                 // Lógica para mover ficha desde posición inicial
                 let nuevaPosicion = await determinarPosicionInicial(valorDado1, valorDado2);
 
@@ -53,20 +43,34 @@ function inicializarMovimiento() {
                     await moverFichaAfuera(ficha.id, nuevaPosicion);
                     ficha.dataset.posicion = nuevaPosicion;
                     console.log(`Ficha ${ficha.id} movida a la posición inicial ${nuevaPosicion}`);
+                    usarDado(0);
+                    usarDado(1);
+                    return;
                 } else {
                     console.warn("No se puede mover la ficha desde la posición inicial con los dados actuales o la posición es inválida:", nuevaPosicion);
                 }
             } else {
                 console.log("Ficha no está en la posición inicial.");
             }
+        
+            let posicionActual = parseInt(ficha.dataset.posicion,10);
 
-            let nuevaPosicion = parseInt(ficha.dataset.posicion);
+            if (posicionActual >= 0 && posicionActual <= 61) {
 
-            if (nuevaPosicion >= 0 && nuevaPosicion <= 61) {
-                manejarTeclado(ficha, nuevaPosicion, valorDado1, valorDado2);
+                const jugador = parseInt(ficha.dataset.jugador,10);
 
+                resaltarOpcionesMovimiento(ficha, valorDado1, valorDado2);
+
+                // Al hacer clic en una casilla resaltada:
+                document.querySelectorAll(".casilla.resaltada").forEach((casilla) => {
+                    casilla.addEventListener("click", () => {
+                        const nuevaPosicion = parseInt(casilla.dataset[`re${jugador}`], 10);
+                        moverFichaAfuera(ficha.id, nuevaPosicion);
+                        limpiarResaltado();
+                    });
+                });
             } else {
-                console.warn("Ficha fuera de rango:", nuevaPosicion);
+                console.warn("Ficha fuera de rango:", posicionActual);
             }
         });
     });

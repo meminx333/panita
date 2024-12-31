@@ -130,3 +130,26 @@ tbody {
     border: .01px solid black;
 
 }
+.ficha.torre {
+    border: 3px solid blue;
+    box-shadow: 0 0 10px blue;
+}
+.casilla.resaltada-camino-normal {
+    background-color: lightgreen;
+}
+
+.casilla.resaltada-puente {
+    background-color: lightblue;
+}
+
+.casilla.resaltada-dado1 {
+    border: 2px solid yellow;
+}
+
+.casilla.resaltada-dado2 {
+    border: 2px solid orange;
+}
+
+.casilla.resaltada-suma {
+    border: 2px solid red;
+}
