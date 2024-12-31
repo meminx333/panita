@@ -19,8 +19,8 @@ export function resaltarOpcionesMovimiento(ficha, dado1, dado2) {
 
             if (casilla) {
                 casilla.classList.add(`resaltada-${tipo}`);
-                casilla.addEventListener("click", async function mover() {
-                    await moverFichaAfuera(ficha.id, pos);
+                casilla.addEventListener("click", () => {
+                    moverFichaAfuera(ficha.id, pos);
                     limpiarResaltado();
                     if (tipo === "dado1") {
                         usarDado(0);
