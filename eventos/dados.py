@@ -1,7 +1,7 @@
 """_summary_Returns:_type_: _description_"""
 
 from flask_socketio import emit
-from game_state import game_state
+from datos.game_state import game_state
 
 
 def register_dados_eventos(socketio):

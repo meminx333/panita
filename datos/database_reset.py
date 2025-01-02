@@ -1,7 +1,7 @@
 """AI is creating summary for Returns:[type]: [description]"""
 
 from app_config import db, app
-from modelos import Jugador, Ficha
+from datos.modelos import Jugador, Ficha
 from tablero.casillas import obtener_casilla_inicial
 
 

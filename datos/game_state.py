@@ -2,7 +2,7 @@
 from random import randint
 from collections import deque
 from tablero.casillas import tablero_configurado
-from modelos import Casilla
+from datos.modelos import Casilla
 
 class GameState:
     """Clase para gestionar el estado del juego."""

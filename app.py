@@ -3,9 +3,10 @@ import os
 from flask import render_template, jsonify, send_from_directory, request
 from app_config import app, socketio, db
 from eventos import register_eventos
-from database_reset import reset_database
-from modelos import Ficha, Jugador, Casilla
-from game_state import game_state
+from datos.database_reset import reset_database
+from datos.modelos import Ficha, Jugador, Casilla
+from datos.game_state import game_state
+from datos.cache import limpiar_cache
 
 # Reinicia la base de datos al iniciar la aplicación
 reset_database()
@@ -174,3 +175,4 @@ def serve_static(filename):
 if __name__ == "__main__":
     print("Iniciando servidor...")
     socketio.run(app, debug=True)
+    limpiar_cache()  # Limpiar la caché al cerrar el servidor
