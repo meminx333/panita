@@ -75,9 +75,9 @@
     z-index: 10; /* Para que estén encima de las casillas */
     align-content: center;
     align-items: center;
-    cursor: pointer;
+    cursor: grab;
     font-size: .4em;
-    display: grid;
+    display: flex;
 }
 
 /* Colores de las fichas */

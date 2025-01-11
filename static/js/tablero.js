@@ -3,10 +3,11 @@ import { usarDado, verificarDadosDisponibles } from "./dados.js";
 import { inicializarCasillas } from "./casillas.js";
 import { determinarPosicionInicial } from "./posicionSalida.js";
 import { resaltarOpcionesMovimiento, limpiarResaltado } from "./movimientoDados.js";
-
+import { inicializarDragged } from "./casillas.js";
 // Función para inicializar eventos en las fichas
 function inicializarMovimiento() {
     document.querySelectorAll(".ficha").forEach((ficha) => {
+        inicializarDragged(ficha);
         inicializarFichas();
         // Agregar evento click a la ficha
         ficha.addEventListener("click", async () => {
