@@ -18,7 +18,15 @@
     font-size: 1rem;
     align-content: center;
     text-align: center;
+    transition: transform 0.2s,box-shadow 0.2s;
 }
+
+.casilla:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 100;
+}
+
 .casilla_doble1 {
     grid-column: span 1; /* ejemplo para columnas que se deben fusionar */
     grid-row: span 2; /* ejemplo para columnas que se deben fusionar */
@@ -32,32 +40,43 @@
 }
 .camino_azul
 { background-color: #a05908; }
-.inicio_azul
-{ background-color: aquamarine; color: transparent; /* Oculta el texto */}
 .camino_verde
 { background-color: #a05908; }
 .camino_rojo
 { background-color: #a05908; }
-.inicio_rojo
-{ background-color: orangered; color: transparent; /* Oculta el texto */}
 .camino_amarillo
 { background-color: #a05908; }
 .canton_azul
-{ background-color: #0000ff; color: transparent; /* Oculta el texto */
-}
+{ background-color: #0000ff; color: transparent; /* Oculta el texto */}
 .canton_verde
 { background-color: #008000; }
 .canton_rojo
 { background-color: #ff0000; color: transparent; /* Oculta el texto */}
 .canton_amarillo
 { background-color: #ffff00; }
-.puente1
+.segura_1
+{ background-color: #0000ff; }
+.segura_2
+{ background-color: #008000; }
+.segura_3
+{ background-color: #ff0000; }
+.segura_4
+{ background-color: #ffff00; }
+.final_1
+{ background-color: #0000ff; }
+.final_2
+{ background-color: #008000; }
+.final_3
+{ background-color: #ff0000; }
+.final_4
+{ background-color: #ffff00; }
+.puente_1
 { background-color: #a05908; }
-.puente2
+.puente_2
 { background-color: #a05908; }
-.puente3
+.puente_3
 { background-color: #a05908; }
-.puente4
+.puente_4
 { background-color: #a05908; }
 .vacio
 { background-color: white; }
@@ -97,7 +116,6 @@
 .policia-2 {
     background-color: green;
 }
-/* Fichas de los policías (verde) */
 .dados-conteiner {
     border: .01px solid black;
     display: grid;

@@ -6,18 +6,26 @@ uso_casillas = {
     "3": "camino_rojo",
     "4": "camino_amarillo",
     "a": "canton_azul",
-    "b": "inicio_azul",
     "u": "canton_verde",
     "e": "canton_rojo",
-    "c": "inicio_rojo",
     "o": "canton_amarillo",
-    "5": "puente1",
-    "6": "puente2",
-    "7": "puente3",
-    "8": "puente4",
+    "5": "puente_1",
+    "6": "puente_2",
+    "7": "puente_3",
+    "8": "puente_4",
     "9": "casilla_doble1",
     "#": "casilla_doble2",
     "0": "vacio",
+    "q": "policia-2",
+    "p": "policia-1",
+    "w": "segura_1",
+    "x": "segura_2",
+    "y": "segura_3",
+    "z": "segura_4",
+    "d": "final_1",
+    "f": "final_2",
+    "g": "final_3",
+    "h": "final_4",
 }
 
 # Diccionario para mapear los números en las casillas basado en la segunda matriz
@@ -56,7 +64,6 @@ valor_jugadores = {
 # Diccionario para definir el recorrido de las fichas para el jugador
 recorrido_fichas = {
     "00": -2,  # Casillas no usadas por el jugador
-    "¿¿": -3, # Casillas donde se inician las fichas 
     "??": 0,  # Casilla0
     "01": 1,  # Casilla1
     "02": 2,  # Casilla2

@@ -1,5 +1,23 @@
 import { actualizarTablaDebug } from "./debug.js";
 
+
+export function actualizarFichas(fichas) {
+    const container = document.getElementById('fichas-container');
+    container.innerHTML = fichas.map(ficha => `
+        <div class="ficha"
+            {% for ficha in fichas %}
+                <div class="ficha jugador-{{ ficha.jugador_id }}"
+                     id="{{ ficha.ficha_id }}"
+                     data-jugador="{{ ficha.jugador_id }}"
+                     data-posicion="{{ ficha.posicion }}"
+                     data-numero="{{ ficha.numero }}"
+                     data-casilla_id="{{ ficha.casilla_id}}">
+                    {{ ficha.ficha_id }}
+                </div>
+            {% endfor %}
+        </div>
+    `).join('');
+}
 // Función genérica para mover fichas
 async function moverFichaGenerico(fichaId, nuevaPosicion, esAfuera = false) {
     try {

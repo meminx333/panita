@@ -25,7 +25,7 @@ def crear_tablero(
     recorrido1_matriz,
     recorrido2_matriz,
 ):
-    """Function printing python version."""
+    """ Crea el tablero combinando los datos de las matrices usando diccionarios predefinidos. """
     tablero_completo = []
     filas = len(uso_matriz)
     columnas = len(uso_matriz[0])
@@ -117,17 +117,17 @@ tablero_configurado = crear_tablero(
     matriz_recorrido1,
     matriz_recorrido2,
 )
+
+# Mejorar usando un diccionario de búsqueda
+casillas_iniciales = {
+    1: {1: "casilla-6-0", 2: "casilla-7-0", 3: "casilla-8-0", 4: "casilla-9-0"},
+    2: {1: "casilla-6-15", 2: "casilla-7-13", 3: "casilla-8-13", 4: "casilla-9-15"}
+}
+
 def obtener_casilla_inicial(jugador_id, numero):
     """obtener la casilla inicial de cada ficha"""
-    for fila in tablero_configurado:
-        for casilla in fila:
-            # Verificar si la casilla corresponde a la posición inicial
-            if jugador_id == 1 and casilla.get("re1") == -1 and casilla.get("numero") == numero:
-                return casilla
-            elif jugador_id == 2 and casilla.get("re2") == -1 and casilla.get("numero") == numero:
-                return casilla
-    print(f"Error: No se encontró una casilla inicial para Jugador {jugador_id}, Ficha {numero}")
-    return None
+    return casillas_iniciales.get(jugador_id, {}).get(numero)
+
 #print("Tablero configurado:")
 #for fila in tablero_configurado:
     #for casilla in fila:

@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Tablero de Juego</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
         
     </head>
     <body>
@@ -26,18 +27,7 @@
             {% endfor %}
         </div>
 
-        <div id="fichas">
-            {% for ficha in fichas %}
-                <div class="ficha jugador-{{ ficha.jugador_id }}"
-                     id="{{ ficha.ficha_id }}"
-                     data-jugador="{{ ficha.jugador_id }}"
-                     data-posicion="{{ ficha.posicion }}"
-                     data-numero="{{ ficha.numero }}"
-                     data-casilla_id="{{ ficha.casilla_id}}">
-                    {{ ficha.ficha_id }}
-                </div>
-            {% endfor %}
-        </div>
+        <div id="fichas-conteiner"></div>
         
         <div id="estado-juego">
             <p id="turno-actual">Turno actual: Jugador 1</p>
@@ -79,10 +69,20 @@
             </tbody>
         </table>
 
-        <button id="boton-tirar-dados-jugador-1">Tirar Dados (Jugador 1)</button>
-        <button id="boton-tirar-dados-jugador-2">Tirar Dados (Jugador 2)</button>
-        <button id="boton-fichas">Iniciar</button>
-
+        <button 
+            id="boton-tirar-dados-jugador-1"
+            aria-label="Tirar dados jugador 1"
+            role="button"
+        >
+            🎲 Jugador 1
+        </button>
+        <button 
+            id="boton-tirar-dados-jugador-2"
+            aria-label="Tirar dados jugador 2"
+            role="button"
+        >
+            🎲 Jugador 2
+        </button>
         <div class="dados-container">
             <div class="dado" id="dado-1">0</div>
             <div class="dado" id="dado-2">0</div>

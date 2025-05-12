@@ -30,6 +30,15 @@ socket.on("actualizar_ultimos_tiros", (data) => {
 socket.on("cambiar_turno", (data) => {
     document.getElementById("turno-actual").innerText = `Turno actual: Jugador ${data.jugador_id}`;
     mostrarNotificacion(`Es el turno del Jugador ${data.jugador_id}`);
+    if (data.jugador_id === 2) {  // ID de la CPU
+        setTimeout(() => {
+            fetch("/turno_cpu", { method: "POST" })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) console.error(data.mensaje);
+            });
+        }, 2000);  // Simula "pensamiento" de 2 segundos
+    }
 });
 
 
